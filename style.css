@@ -1,0 +1,16 @@
+
+body{
+    background-color: black;
+}
+.logo-holder{
+    width: 40vw;
+    height: 20vh;
+    /* object-fit: contain; */
+    overflow: hidden;
+}
+
+#logo{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
