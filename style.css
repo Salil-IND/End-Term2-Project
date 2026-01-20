@@ -5,6 +5,7 @@
 }
 
 body{
+    color: white;
     background-color: #000000;
     background-image:
         linear-gradient(to right, #ffffff29 0.5px, transparent 0.5px),
@@ -16,7 +17,7 @@ body{
 nav{
     display: flex;
     flex-direction: column;
-    position: fixed;
+    position: relative;
     left: 23%;
     top: 3%;
     width: 55vw;
@@ -63,4 +64,35 @@ input:hover, #add-log-btn:hover{
     border-radius: 5px;
     border: 1px solid rgb(79, 79, 79);
 }
+#main-area{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+}
+#contents{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    place-items: center;
 
+    width: 20%;
+    height:fit-content;
+    /* margin:10px; */
+    padding: 10px;
+
+    
+
+    border-radius: 10px;
+    background-color:rgb(23, 23, 23);
+    border: 1px solid rgb(79, 79, 79);
+
+}
+
+
+#nothing{
+    font-size: x-large;
+    position: absolute;
+    top: 50%;
+    left: 30%;
+}
