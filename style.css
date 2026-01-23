@@ -20,8 +20,9 @@ nav{
     position: relative;
     left: 23%;
     top: 3%;
+    margin: 5px;
     width: 55vw;
-    height: fit-content;
+    height: 15vh;
     border-radius: 10px;
     border:1px solid rgb(79, 79, 79);
     padding: 10px;
@@ -33,7 +34,7 @@ nav{
 
 .title{
     font-size: 28px;
-    padding: 10px;
+    padding: 0px;
 
 }
 .input-area{
@@ -46,6 +47,7 @@ input{
     color: white;
     background-color: rgb(23, 23, 23);
     padding: 10px;
+    width: 20%;
     height: 30px;
     border: 1px solid rgb(79, 79, 79);
     border-radius: 5px;
@@ -66,20 +68,24 @@ input:hover, #add-log-btn:hover{
 }
 #main-area{
     width: 100vw;
-    height: 100vh;
+    height: 80vh;
     display: flex;
+    padding: 10px;
 }
+
 #contents{
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    place-content: center;
+    /* position: fixed; */
+    display: grid;
+    grid-template-rows: 40px auto;
+    /*   */
     place-items: center;
 
-    width: 20%;
+    width: 20vw;
+    min-height: 100px;
     height:fit-content;
     /* margin:10px; */
     padding: 10px;
+    /* margin: 10px; */
 
     
 
@@ -87,6 +93,217 @@ input:hover, #add-log-btn:hover{
     background-color:rgb(23, 23, 23);
     border: 1px solid rgb(79, 79, 79);
 
+}
+#contents-heading{
+    height: 30px;
+    justify-items: flex-start;
+}
+
+#contents-empty{
+    display:none;
+}
+
+.sheet-area{
+    width: 80vw;
+    height: 80vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    overflow-y: scroll;
+}
+.sheet-area::-webkit-scrollbar{
+    display: none;
+}
+
+/* --- Year Block Container --- */
+.year-block {
+    width: 95%; 
+    background-color: rgb(23, 23, 23);
+    border: 1px solid rgb(79, 79, 79);
+    border-radius: 12px;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    overflow: hidden; 
+    flex-shrink: 0;
+}
+
+/* --- Navigation Header (< Month >) --- */
+.controls {
+    background-color: rgb(23, 23, 23);
+    border-bottom: 1px solid rgb(79, 79, 79);
+    padding: 10px 0;
+}
+
+.year-dropdown {
+    display: flex;
+    justify-content: center; 
+    padding-bottom: 5px;
+}
+#year-selector {
+    background-color: transparent;
+    color: rgb(1, 102, 255); 
+    font-size: 1.5rem;       
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+}
+
+#year-selector:hover {
+    color: white; 
+}
+
+#year-selector option {
+    background-color: rgb(23, 23, 23);
+    color: white;
+    font-size: 1rem;
+}
+.month-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px;
+}
+
+.month-row h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: rgb(200, 200, 200); 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.nav-arrow {
+    background: none;
+    border: 1px solid transparent;
+    color: white;
+    font-size: 1rem; 
+    cursor: pointer;
+    width: 40px;     
+    height: 40px;    
+    border-radius: 50%;
+    
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transition: all 0.2s ease;
+}
+
+.nav-arrow:hover {
+    background-color: rgba(1, 102, 255, 0.2); 
+    color: rgb(1, 102, 255);
+    transform: scale(1.1); 
+}
+
+
+.month-slider-window {
+    width: 100%;
+    overflow: hidden; 
+}
+
+.month-slider-track {
+    display: flex; 
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+    width: 100%;
+}
+
+.month-slide {
+    min-width: 100%; 
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+
+.month-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.month-table th {
+    text-align: left;
+    padding: 10px;
+    color: rgb(150, 150, 150);
+    border-bottom: 1px solid rgb(79, 79, 79);
+    font-size: 0.9rem;
+}
+
+.month-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgb(60, 60, 60);
+}
+
+
+.month-table:hover tbody tr {
+    opacity: 0.4;
+    filter: blur(1px);
+    transition: 0.2s;
+}
+
+/* Un-blur the specific row being hovered */
+.month-table tbody tr:hover {
+    opacity: 1;
+    filter: blur(0);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* fOCUS SpotlIGHT [Typing] */
+
+.month-table:focus-within tbody tr {
+    opacity: 0.4;
+    filter: blur(2px);
+}
+
+.month-table:focus-within tbody tr:focus-within {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1.01);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/*PHANTOM INPUTS */
+
+.month-table input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent; 
+    color: rgb(220, 220, 220);     
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 6px 4px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+
+.month-table input:focus {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid rgb(1, 102, 255);
+    color: white;
+    padding-left: 8px;
+}
+
+
+.delete-btn {
+    opacity: 0;
+    background: rgb(255, 59, 48);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+/* Show button on row hover */
+.month-table tr:hover .delete-btn {
+    opacity: 1;
 }
 
 

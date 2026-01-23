@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <!-- <div class="logo-holder">
@@ -13,30 +14,122 @@
     <nav>
         <p class="title"><span style="color:rgb(212, 212, 212);">🪙Penny</span><span style="color:rgb(0, 123, 255);">Logger🪙</span></p>
         <div class="input-area">
-            <input type="date">
-            <input type="number" id="amount" placeholder="Enter amount spent">
-            <input type="text" id="remarks" placeholder="Enter the Reason">
+            <input type="date" id="date-picker">
+            <input type="number" id="amount" placeholder="Enter amount">
+            <input type="text" id="remarks" placeholder="Enter Reason">
             <button id="add-log-btn">+ Add</button>
         </div>
     </nav>
     <div id="main-area">
         <aside id="contents">
-            <h3>
-                <b>
-                    Contents
-                </b>
+            <h3 id="contents-heading">
+                
+                Contents
+                
             </h3>
-            <p id="contents-empty">
-                Nothing to see here
-            </p>
+            <div class="contents-list">
+                <p id="contents-empty">
+                    Nothing to see here
+                </p>
+            </div>
         </aside>
 
         <section class="sheet-area">
-            
+            <p id="nothing">There is nothing here. Press "+ Add" to add new records</p>
+            <div class="year-block" data-year="">
+                <div class="controls"> 
+                    <div class="year-dropdown">
+                        <select id="year-selector">
+                            <!-- <option value="2026">2026</option> -->
+                        </select>
+                    </div>
+                    <div class="month-row">
+                        <button class="nav-arrow" id="nav-prev">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <h2 id="current-month">January</h2>
+                        <button class="nav-arrow" id="nav-next">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div> <!--Or maybe year-header -->
+                <div class="month-slider">
+                    <div class="month-slider-track">
+                        <div class="month-slide">
+                            <table class="month-table" data-month="#">
+                                <thead>
+                                    <th class="date-header">Date</th>
+                                    <th class="amount-header">Amount Spent</th>
+                                    <th class="remarks-header">Reason</th>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                        <div class="month-slide">
+                            <table class="month-sheet" data-month="#">
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 
-    <p id="nothing">There is nothing here. Press "+ Add" to add new records</p>
+    
     
 </body>
+<script src="./script.s"></script>
 </html>
