@@ -1,26 +1,6 @@
-//Structure of the data to be stored in local Storage
-//             {"2025":{
-//     "total":5000,
-//     "months":{
-//         "1":{
-//             "total":5000,
-//             "records":[
-//                 {"id":1245, "date":"20-01-2025", "amount":5000, "reason":"Bought a monitor"},
-//             ]
-//         }
-//     }
-// }}
-
-
-
-
-
-//--------------------------------START------------------------------------------------------//
-
-//Placeholder text when nothings there
-
 const noSheets = document.querySelector("#nothing")
 const noContents = document.querySelector("#contents-empty")
+const contentsList = document.querySelector(".contents-list")
 const yearBlock = document.querySelector('.year-block')
 const addBtn = document.querySelector('#add-log-btn')
 const datePicker = document.querySelector("#date-picker")
@@ -32,254 +12,205 @@ const yearPicker = document.getElementById("year-selector")
 const currentMonthDisplay = document.getElementById("current-month")
 const leftNavBtn = document.querySelector("#nav-prev")
 const rightNavBtn = document.querySelector("#nav-next")
-console.log(leftNavBtn)
-const delBtn = document.querySelector(".delete-btn")
 
 const monthMap = {
-  "1": "January",
-  "2": "February",
-  "3": "March",
-  "4": "April",
-  "5": "May",
-  "6": "June",
-  "7": "July",
-  "8": "August",
-  "9": "September",
-  "10": "October",
-  "11": "November",
-  "12": "December"
+  "1": "January", "2": "February", "3": "March", "4": "April",
+  "5": "May", "6": "June", "7": "July", "8": "August",
+  "9": "September", "10": "October", "11": "November", "12": "December"
 };
 
+function updateContents() {
+    const userData = JSON.parse(localStorage.getItem("userData"))
+    if (!userData || userData.years.length === 0) {
+        noContents.style.display = "flex"
+        contentsList.innerHTML = '<p id="contents-empty">Nothing to see here</p>'
+        return
+    }
+    
+    noContents.style.display = "none"
+    let sidebarHTML = ""
+    
+    userData.years.forEach(year => {
+        const yearData = JSON.parse(localStorage.getItem(year))
+        if(yearData) {
+            let monthsHTML = ""
+            for (let i = 1; i <= 12; i++) {
+                const mKey = i.toString()
+                if (yearData.months[mKey] && yearData.months[mKey].total > 0) {
+                    monthsHTML += `
+                        <div style="padding: 5px 10px; font-size: 0.9rem; color: #ccc; display: flex; justify-content: space-between;">
+                            <span>${monthMap[mKey]}</span>
+                            <span>${yearData.months[mKey].total}</span>
+                        </div>`
+                }
+            }
+            if (monthsHTML !== "") {
+                sidebarHTML += `
+                    <div style="margin-bottom: 15px; width: 100%;">
+                        <div style="padding: 5px; background: rgba(255,255,255,0.1); border-radius: 4px; font-weight: bold; display: flex; justify-content: space-between;">
+                            <span>${year}</span>
+                            <span>${yearData.total}</span>
+                        </div>
+                        ${monthsHTML}
+                    </div>`
+            }
+        }
+    })
+    contentsList.innerHTML = sidebarHTML
+}
 
-
-// Inside your loop where you build the HTML string:
-// const rowHTML = `
-//   <tr data-id="${record.id}">
-//       <td>
-//           <input type="text" value="${record.date}" readonly style="cursor: default; opacity: 0.7;">
-//       </td>
-
-//       <td>
-//           <input type="number" 
-//                  value="${record.amount}" 
-//                  data-field="amount" 
-//                  onchange="updateRecord(${record.id}, 'amount', this.value)">
-//       </td>
-
-//       <td>
-//           <input type="text" 
-//                  value="${record.reason}" 
-//                  data-field="reason" 
-//                  onchange="updateRecord(${record.id}, 'reason', this.value)">
-//       </td>
-
-//       <td style="text-align: right;">
-//           <button class="delete-btn" onclick="deleteRecord(${record.id})">Delete</button>
-//       </td>
-//   </tr>
-// `;
+function deleteRecord(id) {
+    const userData = JSON.parse(localStorage.getItem("userData"))
+    let yearData = JSON.parse(localStorage.getItem(userData.currentYear))
+    const currentMonthKey = userData.currentMonth.toString()
+    
+    const recordIndex = yearData.months[currentMonthKey].records.findIndex(r => r.id === id)
+    
+    if (recordIndex !== -1) {
+        const record = yearData.months[currentMonthKey].records[recordIndex]
+        const amount = Number(record.amount)
+        
+        yearData.months[currentMonthKey].total = Number(yearData.months[currentMonthKey].total) - amount
+        yearData.total = Number(yearData.total) - amount
+        
+        yearData.months[currentMonthKey].records.splice(recordIndex, 1)
+        
+        localStorage.setItem(userData.currentYear, JSON.stringify(yearData))
+        updateUI()
+    }
+}
 
 function constructSheets(year) {
-    const yearData = JSON.parse(localStorage.getItem(year))
+    let yearData = JSON.parse(localStorage.getItem(year))
+    if (!yearData) yearData = { months: {} }
+    
+    let allSlides = ""
 
-    const monthsList = Object.keys(yearData["months"])
-
-    monthsList.forEach(function (month) {
-        const monthRecords = yearData["months"][month]["records"]
-        if (monthRecords.length !== 0) {
-            let sheetRows = ""
-            monthRecords.forEach((record) => {
-                const rowTemp = `   
+    for (let i = 1; i <= 12; i++) {
+        const monthKey = i.toString()
+        let sheetRows = ""
+        
+        if (yearData.months && yearData.months[monthKey] && yearData.months[monthKey].records.length > 0) {
+            yearData.months[monthKey].records.forEach((record) => {
+                sheetRows += `
                     <tr data-id="${record.id}">
                         <td>
-                            <input type="text" value="${new Date(record.date).toLocaleDateString().split("T")[0]}" readonly style="cursor: default; opacity: 0.7;">
+                            <input type="text" value="${new Date(record.date).toLocaleDateString()}" readonly style="cursor: default; opacity: 0.7;">
                         </td>
-
                         <td>
                             <input type="number" 
-                                    value="${record.amount}" 
-                                    data-field="amount" 
-                                    onchange="updateRecord('${record.id}', 'amount', this.value)">
+                                   value="${record.amount}" 
+                                   data-field="amount" 
+                                   onchange="updateRecord('${record.id}', 'amount', this.value)">
                         </td>
-
                         <td>
                             <input type="text" 
-                                    value="${record.remark}" 
-                                    data-field="reason" 
-                                    onchange="updateRecord('${record.id}', 'reason', this.value)">
+                                   value="${record.remark}" 
+                                   data-field="reason" 
+                                   onchange="updateRecord('${record.id}', 'remark', this.value)">
                         </td>
-
                         <td style="text-align: right;">
                             <button class="delete-btn" onclick="deleteRecord('${record.id}')">Delete</button>
                         </td>
-                    </tr>
-                    `
-                sheetRows = rowTemp + sheetRows
+                    </tr>`
             })
-            //----------------------------------------------MONTH SLIDER----------------------------------------------//
-            monthSliderTrack.innerHTML += `<div class="month-slide" data-month=${month.toString()}>
-                            <table class="month-table" data-month=${month.toString()}>
-                                <thead>
-                                    <tr>
-                                        <th class="date-header">Date</th>
-                                        <th class="amount-header">Amount Spent</th>
-                                        <th class="remarks-header">Reason</th>
-                                        <th> 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${sheetRows}
-                                </tbody>
-                            </table>
-                        </div>`
+        } else {
+            sheetRows = `<tr><td colspan="4" style="text-align:center; padding:20px; color:gray;">No records found</td></tr>`
         }
 
-
-    })
-
+        allSlides += `
+            <div class="month-slide">
+                <table class="month-table">
+                    <thead>
+                        <tr>
+                            <th width="20%">Date</th>
+                            <th width="20%">Amount</th>
+                            <th width="50%">Reason</th>
+                            <th width="10%"></th> 
+                        </tr>
+                    </thead>
+                    <tbody>${sheetRows}</tbody>
+                </table>
+            </div>`
+    }
+    monthSliderTrack.innerHTML = allSlides
 }
 
 function updateUI() {
-    if (localStorage.length == 0) {
-        noSheets.style.display = "flex"
-        noContents.style.display = "flex"
+    updateContents()
+    if (localStorage.length === 0) {
+        noSheets.style.display = "block"
         yearBlock.style.display = "none"
-
-        return;
-    } else {
-        noSheets.style.display = "none"
-        noContents.style.display = "flex" //Have to correct this
-        yearBlock.style.display = "block"
-
-        
-        let userData = JSON.parse(localStorage.getItem("userData"))
-        let yearData = JSON.parse(localStorage.getItem(userData.currentYear))
-        if (userData) {
-
-            monthSliderTrack.innerHTML = ""
-            constructSheets(userData.currentYear)
-
-            if (yearData['months'][userData.currentMonth]['records'].length != 0){
-                monthSliderTrack.style.transform = `translate(calc(${userData.currentMonth - 1}*(-100%) ))`
-            } else {
-                const monthsList = Object.keys(yearData["months"])
-                userData.currentMonth = monthsList.find((month) => yearData.months.month.records.length!=0)
-            }
-
-            //updating the Year Header
-            currentMonthDisplay.innerText = monthMap[userData.currentMonth]
-            yearPicker.innerHTML=""
-            userData.years.forEach(function(year){
-                yearPicker.innerHTML+=`<option ${(year==userData.currentYear)?"selected":''} value="${year}">${year}</option>`
-            })
-
-            //Updating navig buttons
-            if (userData.currentMonth == "1"){
-                leftNavBtn.disabled = true
-            } else {
-                leftNavBtn.disabled = false
-            }
-
-            if (userData.currentMonth == document.querySelectorAll(".month-slide").length){
-                rightNavBtn.disabled = true
-            } else {
-                rightNavBtn.disabled = false
-            }
-        }
-
-
+        return
+    } 
+    
+    const userData = JSON.parse(localStorage.getItem("userData"))
+    if (!userData) {
+        noSheets.style.display = "block"
+        yearBlock.style.display = "none"
+        return
     }
 
+    noSheets.style.display = "none"
+    yearBlock.style.display = "block"
 
+    constructSheets(userData.currentYear)
 
+    monthSliderTrack.style.transform = `translateX(calc(${(userData.currentMonth - 1)} * -100%))`
+    currentMonthDisplay.innerText = monthMap[userData.currentMonth]
+    
+    yearPicker.innerHTML = ""
+    userData.years.forEach(function(year){
+        yearPicker.innerHTML += `<option ${(year == userData.currentYear) ? "selected" : ''} value="${year}">${year}</option>`
+    })
 
+    if (userData.currentMonth == 1){
+        leftNavBtn.disabled = true
+        leftNavBtn.style.opacity = 0.3
+    } else {
+        leftNavBtn.disabled = false
+        leftNavBtn.style.opacity = 1
+    }
 
-
+    if (userData.currentMonth == 12){
+        rightNavBtn.disabled = true
+        rightNavBtn.style.opacity = 0.3
+    } else {
+        rightNavBtn.disabled = false
+        rightNavBtn.style.opacity = 1
+    }
 }
 
-
 function updateDB(id, date, amount, remark) {
-    const record = { id, date, amount, remark }
     const day = date.getDate()
-    const month = date.getMonth() + 1;
+    const month = date.getMonth() + 1
     const year = date.getFullYear()
+    const record = { id, date, amount, remark }
 
     let yearData = JSON.parse(localStorage.getItem(year))
     let userData = JSON.parse(localStorage.getItem("userData"))
 
     if (!userData) {
-        userData = { "years": [], "currentYear": "", "currentMonth": 0 }
+        userData = { "years": [], "currentYear": year, "currentMonth": month }
     }
 
     if (!yearData) {
-        yearData = {
-            "total": 0,
-            "months": {
-                "1": {
-                    "total": 0,
-                    "records": []
-                },
-                "2": {
-                    "total": 0,
-                    "records": []
-                },
-                "3": {
-                    "total": 0,
-                    "records": []
-                },
-                "4": {
-                    "total": 0,
-                    "records": []
-                },
-                "5": {
-                    "total": 0,
-                    "records": []
-                },
-                "6": {
-                    "total": 0,
-                    "records": []
-                },
-                "7": {
-                    "total": 0,
-                    "records": []
-                },
-                "8": {
-                    "total": 0,
-                    "records": []
-                },
-                "9": {
-                    "total": 0,
-                    "records": []
-                },
-                "10": {
-                    "total": 0,
-                    "records": []
-                },
-                "11": {
-                    "total": 0,
-                    "records": []
-                },
-                "12": {
-                    "total": 0,
-                    "records": []
-                }
-
-            }
+        yearData = { "total": 0, "months": {} }
+        for(let i=1; i<=12; i++) {
+            yearData.months[i] = { "total": 0, "records": [] }
         }
-
-
-        // yearData = {"months":{month :{"total":amount, "record":[record]}}, "total":amount}
     }
 
     yearData["months"][month.toString()]["records"].push(record)
-    // yearData["months"][month.toString()]["records"].sort((a, b) =>  {new Date(a.date) - new Date(b.date)})   
-    yearData["total"] = Number(yearData["total"]) + amount //Increasing the total
-    yearData["months"][month.toString()]["total"] = Number(yearData["months"][month.toString()]["total"]) + amount; //
+    yearData["months"][month.toString()]["records"].sort((a, b) => new Date(a.date) - new Date(b.date))
+    
+    yearData["total"] = Number(yearData["total"]) + amount 
+    yearData["months"][month.toString()]["total"] = Number(yearData["months"][month.toString()]["total"]) + amount
 
     localStorage.setItem(year, JSON.stringify(yearData))
 
-    if (!userData["years"].includes(year)) {
-        userData["years"].push(year)
+    if (!userData["years"].includes(year.toString())) {
+        userData["years"].push(year.toString())
         userData["years"].sort()
     }
     userData.currentYear = year
@@ -291,50 +222,41 @@ function updateDB(id, date, amount, remark) {
 function updateRecord(id, type, value) {
     const userData = JSON.parse(localStorage.getItem("userData"))
     let yearData = JSON.parse(localStorage.getItem(userData.currentYear))
+    const currentMonthKey = userData.currentMonth.toString()
 
-    yearData["months"][userData.currentMonth]["records"].forEach(function (record) {
-        if (record.id == id) {
-            if (type == "amount") {
-                yearData["months"][userData.currentMonth]["amount"] = Number(yearData["months"][userData.currentMonth]["amount"]) - record.amount + Number(value)
-                yearData["total"] = Number(yearData['total']) - record.amount + Number(value)
-            } else {
+    const records = yearData.months[currentMonthKey].records
+    const record = records.find(r => r.id === id)
 
-            }
-            record[type] = Number(value);
+    if (record) {
+        if (type === "amount") {
+            const oldVal = Number(record.amount)
+            const newVal = Number(value)
+            yearData.months[currentMonthKey].total = Number(yearData.months[currentMonthKey].total) - oldVal + newVal
+            yearData.total = Number(yearData.total) - oldVal + newVal
+            record.amount = newVal
+        } else {
+            record[type] = value
         }
-    })
-
+    }
     localStorage.setItem(userData.currentYear, JSON.stringify(yearData))
-    console.log("Update Success!!!")
+    updateUI()
 }
 
+//= = == = = = = = = = = = = = = = = = = = =    ____  _____    _    _        ____ ___  ____  _____ _  - - - - - - - - - - - - - - - - - -
+//= = == = = = = = = = = = = = = = = = = = =   |  _ \| ____|  / \  | |      / ___/ _ \|  _ \| ____| | - - - - - - - - - - - - - - - - - -
+//= = == = = = = = = = = = = = = = = = = = =   | |_) |  _|   / _ \ | |     | |  | | | | | | |  _| | | - - - - - - - - - - - - - - - - - -
+//= = == = = = = = = = = = = = = = = = = = =   |  _ <| |___ / ___ \| |___  | |__| |_| | |_| | |___|_| - - - - - - - - - - - - - - - - - -
+//= = == = = = = = = = = = = = = = = = = = =   |_| \_\_____/_/   \_\_____|  \____\___/|____/|_____(_) - - - - - - - - - - - - - - - - - -
 
-
-
-
-
-
-//                                   ____  _____    _    _        ____ ___  ____  _____ _
-//                                  |  _ \| ____|  / \  | |      / ___/ _ \|  _ \| ____| |
-//                                  | |_) |  _|   / _ \ | |     | |  | | | | | | |  _| | |
-//                                  |  _ <| |___ / ___ \| |___  | |__| |_| | |_| | |___|_|
-//                                  |_| \_\_____/_/   \_\_____|  \____\___/|____/|_____(_)
-
-updateUI()
-//Adding fucntionality to the add button
 addBtn.addEventListener("click", function (event) {
-    //Id
+    if(!datePicker.value || !amountField.value) return
     const id = crypto.randomUUID()
-    //Date
     const date = new Date(datePicker.value)
-    //amount
     const expenditure = Number(amountField.value)
-    //remarks
     const remarks = remarksField.value
 
     updateDB(id, date, expenditure, remarks)
     updateUI()
-    
 
     datePicker.value = ""
     amountField.value = ""
@@ -342,45 +264,30 @@ addBtn.addEventListener("click", function (event) {
 })
 
 yearPicker.addEventListener("change", function(event){
-    const year = yearPicker.value;
-
+    const year = yearPicker.value
     let userData = JSON.parse(localStorage.getItem("userData"))
-
-    userData.currentYear = year;
-
+    userData.currentYear = year
+    userData.currentMonth = 1 
     localStorage.setItem("userData", JSON.stringify(userData))
     updateUI()
 })
 
 leftNavBtn.addEventListener("click", function(event){
-    console.log("I am clear")
     let userData = JSON.parse(localStorage.getItem("userData"))
-    userData.currentMonth = Number(userData.currentMonth) - 1;
-    localStorage.setItem("userData", JSON.stringify(userData))
-    updateUI()
+    if (userData.currentMonth > 1) {
+        userData.currentMonth = Number(userData.currentMonth) - 1
+        localStorage.setItem("userData", JSON.stringify(userData))
+        updateUI()
+    }
 })
 
 rightNavBtn.addEventListener("click", function(event){
     let userData = JSON.parse(localStorage.getItem("userData"))
-    userData.currentMonth = Number(userData.currentMonth) + 1;
-    localStorage.setItem("userData", JSON.stringify(userData))
-    updateUI()
+    if (userData.currentMonth < 12) {
+        userData.currentMonth = Number(userData.currentMonth) + 1
+        localStorage.setItem("userData", JSON.stringify(userData))
+        updateUI()
+    }
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+updateUI()
