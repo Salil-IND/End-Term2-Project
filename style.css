@@ -42,7 +42,7 @@ nav{
     display: flex;
     justify-content: space-evenly;
 }
-input{
+.input-area>input{
     margin: 10px;
     color: white;
     background-color: rgb(23, 23, 23);
@@ -52,7 +52,7 @@ input{
     border: 1px solid rgb(79, 79, 79);
     border-radius: 5px;
 }
-input:hover, #add-log-btn:hover{
+.input-area>input:hover, #add-log-btn:hover{
     /* box-shadow: 0px 0px 3px 0px white; */
     border: 2px solid rgb(1, 102, 255);
     box-shadow: 0px 0px 1px 3px rgb(54, 133, 252);

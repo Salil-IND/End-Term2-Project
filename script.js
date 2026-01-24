@@ -58,6 +58,64 @@ const yearPicker = document
 //   </tr>
 // `;
 
+function constructSheets(year) {
+    const yearData = JSON.parse(localStorage.getItem(year))
+
+    const monthsList = Object.keys(yearData["months"])
+
+    monthsList.forEach(function (month) {
+        const monthRecords = yearData["months"][month]["records"]
+        if (monthRecords.length !== 0){
+            let sheetRows = ""
+        monthRecords.forEach((record) => {
+            const rowTemp = `
+                    <tr data-id="${record.id}">
+                        <td>
+                            <input type="text" value="${record.date}" readonly style="cursor: default; opacity: 0.7;">
+                        </td>
+
+                        <td>
+                            <input type="number" 
+                                    value="${record.amount}" 
+                                    data-field="amount" 
+                                    onchange="updateRecord(${record.id}, 'amount', this.value)">
+                        </td>
+
+                        <td>
+                            <input type="text" 
+                                    value="${record.remark}" 
+                                    data-field="reason" 
+                                    onchange="updateRecord(${record.id}, 'reason', this.value)">
+                        </td>
+
+                        <td style="text-align: right;">
+                            <button class="delete-btn" onclick="deleteRecord(${record.id})">Delete</button>
+                        </td>
+                    </tr>
+                    `
+            sheetRows = rowTemp+sheetRows
+        })
+        //----------------------------------------------MONTH SLIDER----------------------------------------------//
+        monthSliderTrack.innerHTML = `<div class="month-slide" data-month=${month.toString()}>
+                            <table class="month-table" data-month=${month.toString()}>
+                                <thead>
+                                    <tr>
+                                        <th class="date-header">Date</th>
+                                        <th class="amount-header">Amount Spent</th>
+                                        <th class="remarks-header">Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${sheetRows}
+                                </tbody>
+                            </table>
+                        </div>`
+        }
+
+        
+    })
+
+}
 function updateUI() {
     if (localStorage.length == 0) {
         noSheets.style.display = "flex"
@@ -70,7 +128,7 @@ function updateUI() {
         if (userData){
             constructSheets(userData.currentYear)
 
-            monthSliderTrack.style.transform = `translate(calc(${userData.currentMonth}*(-100%) ))`
+            monthSliderTrack.style.transform = `translate(calc(${userData.currentMonth-1}*(-100%) ))`
         }
         
 
@@ -91,7 +149,7 @@ addBtn.addEventListener("click", function (event) {
     //Date
     const date = new Date(datePicker.value)
     //amount
-    const expenditure = amountField.value
+    const expenditure = Number(amountField.value)
     //remarks
     const remarks = remarksField.value
 
@@ -174,7 +232,7 @@ function updateDB(id, date, amount, remark) {
 
     yearData["months"][month.toString()]["records"].push(record)
     yearData["months"][month.toString()]["records"].sort((a, b) => { new Date(a.date) - new Date(b.date) })
-    yearData["total"] = NUmber(yearData["total"])+amount //Increasing the total
+    yearData["total"] = Number(yearData["total"])+amount //Increasing the total
     yearData["months"][month.toString()]["total"] = Number(yearData["months"][month.toString()]["total"]) + amount; //
 
     localStorage.setItem(year, JSON.stringify(yearData))
@@ -189,59 +247,7 @@ function updateDB(id, date, amount, remark) {
     localStorage.setItem("userData", JSON.stringify(userData))
 }
 
-function constructSheets(year) {
-    const yearData = JSON.parse(localStorage.getItem(year))
 
-    const monthsList = Object.keys(yearData["months"])
-
-    monthsList.forEach(function (month) {
-        const monthRecords = yearData["months"][month]["records"]
-        let sheetRows = ""
-        monthRecords.forEach((record) => {
-            sheetRows += `
-                    <tr data-id="${record.id}">
-                        <td>
-                            <input type="text" value="${record.date}" readonly style="cursor: default; opacity: 0.7;">
-                        </td>
-
-                        <td>
-                            <input type="number" 
-                                    value="${record.amount}" 
-                                    data-field="amount" 
-                                    onchange="updateRecord(${record.id}, 'amount', this.value)">
-                        </td>
-
-                        <td>
-                            <input type="text" 
-                                    value="${record.remark}" 
-                                    data-field="reason" 
-                                    onchange="updateRecord(${record.id}, 'reason', this.value)">
-                        </td>
-
-                        <td style="text-align: right;">
-                            <button class="delete-btn" onclick="deleteRecord(${record.id})">Delete</button>
-                        </td>
-                    </tr>
-                    `
-        })
-        //----------------------------------------------MONTH SLIDER----------------------------------------------//
-        monthSliderTrack.innerHTML = `<div class="month-slide" data-month=${month.toString()}>
-                            <table class="month-sheet" data-month=${month.toString()}>
-                                <thead>
-                                    <th class="date-header">Date</th>
-                                    <th class="amount-header">Amount Spent</th>
-                                    <th class="remarks-header">Reason</th>
-                                </thead>
-                                <tbody>
-                                    ${sheetRows}
-                                </tbody>
-                            </table>
-                        </div>`
-
-        
-    })
-
-}
 
 
 
