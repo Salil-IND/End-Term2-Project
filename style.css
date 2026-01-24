@@ -52,6 +52,10 @@ nav{
     border: 1px solid rgb(79, 79, 79);
     border-radius: 5px;
 }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+     margin: 0;
+}
 .input-area>input:hover, #add-log-btn:hover{
     /* box-shadow: 0px 0px 3px 0px white; */
     border: 2px solid rgb(1, 102, 255);
