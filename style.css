@@ -57,9 +57,18 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
      margin: 0;
 }
 .input-area>input:hover, #add-log-btn:hover{
-    /* box-shadow: 0px 0px 3px 0px white; */
     border: 2px solid rgb(1, 102, 255);
     box-shadow: 0px 0px 1px 3px rgb(54, 133, 252);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    transform: scale(1.1);
 }
 #add-log-btn{
     background-color:rgb(1, 102, 255)   ;
