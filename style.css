@@ -317,3 +317,74 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
     top: 50%;
     left: 30%;
 }
+
+/* =========================================
+   MOBILE RESPONSIVENESS 
+   ========================================= */
+
+@media screen and (max-width: 768px) {
+
+    
+    nav {
+        width: 95%;        
+        left: 0;           
+        margin: 10px auto; 
+        height: auto;      
+        position: static;  
+    }
+
+    
+    .input-area {
+        flex-direction: column; 
+        align-items: center;
+        gap: 10px;
+    }
+
+    .input-area > input, 
+    #add-log-btn {
+        width: 100%;       
+        margin: 5px 0;     
+        height: 40px;      
+    }
+
+    
+    #main-area {
+        flex-direction: column; 
+        height: auto;      
+        padding: 0;
+    }
+
+    
+    #contents {
+        width: 95%;        
+        margin: 0 auto 20px auto; 
+        grid-template-rows: 30px auto; 
+    }
+
+    
+    .sheet-area {
+        width: 100%;
+        height: auto;      
+        overflow: visible; 
+    }
+
+
+    .month-slide {
+        overflow-x: auto;
+        display: block;
+    }
+    
+    .month-table {
+        min-width: 600px; 
+    }
+
+
+    #nothing {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
